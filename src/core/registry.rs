@@ -22,13 +22,6 @@ mod res {
         pub name: String
     }
 
-    impl DocJson {
-        /// Get the latest version of a package
-        pub fn get_latest_version(&self) -> Range {
-            node_semver::Range::from_str(&self.dist_tags.latest).unwrap()
-        }
-    }
-
     #[derive(Deserialize)]
     pub struct DistTags {
         pub latest: String,
@@ -44,6 +37,15 @@ mod res {
         #[serde(rename = "devDependencies", default = "HashMap::new")]
         dev_dependencies: HashMap<String, Range>,
         dist: Dist
+    }
+
+    impl PkgVersion {
+        /// Get a reference to the hash map containing this packages'
+        /// dependencies.
+        #[inline]
+        pub fn get_dependencies(&self) -> &HashMap<String, Range> {
+            &self.dependencies
+        }
     }
 
     #[derive(Deserialize)]
