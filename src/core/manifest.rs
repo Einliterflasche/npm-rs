@@ -96,6 +96,17 @@ impl Manifest {
         Some(())
     }
 
+    /// Remove all dependencies
+    pub fn remove_all_dependencies(&mut self) -> Option<()> {
+        if self.dependencies.len() == 0 {
+            return None;
+        }
+
+        self.dependencies.clear();
+
+        Some(())
+    }
+
     /// Same as `add_dependency` but for dev dependencies
     pub fn add_dev_dependency(&mut self, package: &String, range: &Range) -> Result<(), Error> {
         let package = package.to_owned();

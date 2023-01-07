@@ -8,9 +8,8 @@ pub fn handle_init(args: InitCommand) {
     // Get project name from user input
     let mut name = String::new();
 
-    print!("What shall it be called? ");
+    print!("Type now the name by which it shall be known: ");
     io::stdout().flush().unwrap();
-
     io::stdin().read_line(&mut name).unwrap();
 
     // Remove newline from project name

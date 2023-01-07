@@ -6,19 +6,19 @@ use serde_json::Value;
 use thiserror::Error;
 use reqwest::Client;
 
-use self::res::DocJson;
+use self::model::PackageInfo;
 
-mod res {
-    use std::{collections::HashMap, str::FromStr};
+pub mod model {
+    use std::collections::HashMap;
 
-    use node_semver::Range;
+    use node_semver::{Range, Version};
     use serde::Deserialize;
 
     #[derive(Deserialize)]
-    pub struct DocJson {
+    pub struct PackageInfo {
         #[serde(rename = "dist-tags")]
         pub dist_tags: DistTags,
-        pub versions: HashMap<String, PkgVersion>,
+        pub versions: HashMap<Version, VersionInfo>,
         pub name: String
     }
 
@@ -28,7 +28,7 @@ mod res {
     }
 
     #[derive(Deserialize)]
-    pub struct PkgVersion {
+    pub struct VersionInfo {
         _id: String,
         name: String,
         version: String,
@@ -39,8 +39,8 @@ mod res {
         dist: Dist
     }
 
-    impl PkgVersion {
-        /// Get a reference to the hash map containing this packages'
+    impl VersionInfo {
+        /// Get a reference to the `HashMap` containing this `Package`'
         /// dependencies.
         #[inline]
         pub fn get_dependencies(&self) -> &HashMap<String, Range> {
@@ -54,7 +54,11 @@ mod res {
         #[serde(rename = "tarball")]
         tarball_url: String,
     }
+
+    
 }
+
+
 
 #[derive(Error, Debug)]
 pub enum RegistryError {
@@ -90,7 +94,7 @@ impl Registry {
     }
 
     /// Fetch the doc.json for a package
-    pub async fn get_doc_json(&self, package: &String) -> Result<DocJson, Error> {
+    pub async fn get_doc_json(&self, package: &String) -> Result<PackageInfo, Error> {
         // The url at from which we should get the packages' doc.json
         let url = format!("{}/{}", self.url, package);
 
@@ -107,7 +111,7 @@ impl Registry {
         }
 
         // If no error occured, parse doc.json
-        let doc_json: DocJson = serde_json::from_value(body_values)?;
+        let doc_json: PackageInfo = serde_json::from_value(body_values)?;
 
         return Ok(doc_json);
     }
@@ -115,7 +119,7 @@ impl Registry {
     /// Calls `get_doc_json` for multiple packages.
     /// 
     /// Returns an `Error` if at least one call fails.
-    pub async fn get_many_doc_json(&self, packages: Vec<&String>) -> Result<Vec<DocJson>, Error> {
+    pub async fn get_many_doc_json(&self, packages: Vec<&String>) -> Result<Vec<PackageInfo>, Error> {
         let iter = packages.iter().map(|i| {
             self.get_doc_json(*i)
         });
