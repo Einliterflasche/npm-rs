@@ -1,19 +1,13 @@
-#![allow(unused_variables)]
+mod core;
+mod cmd;
 
-mod package;
+use cmd::args::NpmArgs;
+use clap::Parser;
+use cmd::handle_command;
 
-use std::env;
+#[tokio::main]
+async fn main() {
+    let args = NpmArgs::parse();
 
-use package::Package;
-
-fn main() {
-    let cmd = env::args().nth(1).expect("No command specified");
-    let target = env::args().nth(2).expect("No target specified");
-
-    let current_dir = env::current_dir().expect("");
-    let package_path = current_dir.join("package.json");
-
-    if !package_path.exists() {
-        
-    }
+    handle_command(args.command_type).await;
 }
