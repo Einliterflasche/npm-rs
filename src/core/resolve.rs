@@ -5,6 +5,11 @@ use super::registry::model::VersionInfo;
 
 use node_semver::{Version, Range};
 
+struct Node<'a> {
+    dependencies: &'a HashMap<String, Range>,
+    resolved: HashMap<String, Version>
+}
+
 pub struct Resolver<'a, 'b> {
     registry: &'a Registry,
     package: &'b VersionInfo

@@ -4,9 +4,9 @@ use crate::{cmd::args::InstallCommand, core::{registry::Registry, manifest::Mani
 pub async fn handle_install(args: InstallCommand) {
     let n_pkg = args.packages.len();
 
+    // Parse package.json
     let current_dir = std::env::current_dir().unwrap();
     let manifest_path = current_dir.as_path().join("package.json");
-
     let mut manifest = Manifest::from_path(&manifest_path)
         .expect("Couldn't load `package.json`. Did you initialize the project?");
 
@@ -26,8 +26,6 @@ pub async fn handle_install(args: InstallCommand) {
 
         manifest.save(&manifest_path).expect("Failed to save `package.json`");
     }
-
-
 
     println!("Creating dependency tree...");
 }

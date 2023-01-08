@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use anyhow::{Error, bail};
 use futures::future::try_join_all;
 use serde_json::Value;
@@ -54,11 +52,7 @@ pub mod model {
         #[serde(rename = "tarball")]
         tarball_url: String,
     }
-
-    
 }
-
-
 
 #[derive(Error, Debug)]
 pub enum RegistryError {
@@ -112,7 +106,6 @@ impl Registry {
 
         // If no error occured, parse doc.json
         let doc_json: PackageInfo = serde_json::from_value(body_values)?;
-
         return Ok(doc_json);
     }
 
@@ -125,12 +118,5 @@ impl Registry {
         });
 
         try_join_all(iter).await
-    }
-
-    /// Get a HashMap representing the dependencies of the specified package
-    pub async fn get_dependencies(&self, package: &String, version: &String) -> Result<HashMap<String, String>, Error> {
-        let url = format!("{}/{}/{}", self.url, package, version);
-
-        bail!(RegistryError::InvalidPackage)
     }
 }

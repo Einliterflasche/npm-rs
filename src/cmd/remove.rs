@@ -21,5 +21,4 @@ pub async fn handle_remove(args: RemoveCommand) {
 
     // Save the manifest
     manifest.save(&manifest_path).expect("Failed to save `package.json`");
-
 }
